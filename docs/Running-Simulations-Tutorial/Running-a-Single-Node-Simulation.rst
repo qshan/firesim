@@ -66,12 +66,12 @@ Since we only want to simulate a single node, let's switch to using one
 ::
 
     run_farm:
-    # per aws restrictions, this tag cannot be longer than 255 chars
-    run_farm_tag: mainrunfarm
-    f1_16xlarges: 0
-    f1_4xlarges: 0
-    m4_16xlarges: 0
-    f1_2xlarges: 1
+        # per aws restrictions, this tag cannot be longer than 255 chars
+        run_farm_tag: mainrunfarm
+        f1_16xlarges: 0
+        f1_4xlarges: 0
+        m4_16xlarges: 0
+        f1_2xlarges: 1
 
 You'll see other parameters here, like ``run_instance_market``,
 ``spot_interruption_behavior``, and ``spot_max_price``. If you're an experienced
