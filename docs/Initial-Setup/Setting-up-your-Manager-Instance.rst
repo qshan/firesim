@@ -75,7 +75,7 @@ In either case, ``ssh`` into your instance (e.g. ``ssh -i firesim.pem centos@YOU
 
 ::
 
-    centos@ip-172-30-2-140.us-west-2.compute.internal:~$ cat machine-launchstatus
+    centos@ip-172-30-2-140.us-west-2.compute.internal:~$ cat /machine-launchstatus
     machine launch script started
     machine launch script completed!
 

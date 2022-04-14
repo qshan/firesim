@@ -81,10 +81,10 @@ section of your config_runtime.yaml.
 
 ::
 
-    [synthprint]
-    start=0
-    end=-1
-    cycleprefix=yes
+    synth_print:
+        start: 0
+        end: -1
+        cycle_prefix: yes
 
 The "start" field corresponds to "print-start", "end" to "print-end", and
 "cycleprefix" to "print-no-cycle-prefix".

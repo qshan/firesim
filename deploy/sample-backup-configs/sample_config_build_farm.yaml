@@ -17,6 +17,7 @@
 # Note: For large designs (ones that would fill a EC2.2xlarge/Xilinx VU9P)
 # Vivado uses in excess of 32 GiB. Keep this in mind when selecting a
 # non-default instance type.
+# DOCREF START: EC2 Build Farm
 ec2_build_farm:
     build_farm_type: AWSEC2
     args:
@@ -30,8 +31,10 @@ ec2_build_farm:
         spot_max_price: ondemand
         # REQUIRED: default location of build directory on build host
         default_build_dir: /home/centos/firesim-build
+# DOCREF END: EC2 Build Farm
 
 # Unmanaged list of build hosts. Assumed that they are pre-setup to run builds.
+# DOCREF START: Local Build Farm
 local_build_farm:
     build_farm_type: ExternallyProvisioned
     args:
@@ -52,3 +55,4 @@ local_build_farm:
         #         override_build_dir: /scratch/specific-build-host-build-dir
         build_farm_hosts:
             - localhost
+# DOCREF END: Local Build Farm

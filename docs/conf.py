@@ -9,6 +9,7 @@
 import shutil
 import os
 import subprocess
+import sys
 
 from sphinx.util import logging
 logger = logging.getLogger(__name__)

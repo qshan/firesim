@@ -1,6 +1,8 @@
 Welcome to FireSim's documentation (version "|version|")!
 ===========================================================
 
+.. warning:: The documentation currently only describes a AWS EC2 setup of FireSim.
+
 New to FireSim? Jump to the :ref:`firesim-basics` page for more info.
 
 .. toctree::

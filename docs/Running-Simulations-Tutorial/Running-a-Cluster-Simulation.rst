@@ -70,19 +70,19 @@ we want. Let's outline the important parameters:
 
 * ``f1_16xlarges: 1``: This tells the manager that we want to launch one ``f1.16xlarge`` when we call the ``launchrunfarm`` command.
 * ``topology: example_8config``: This tells the manager to use the topology named ``example_8config`` which is defined in ``deploy/runtools/user_topology.py``. This topology simulates an 8-node cluster with one ToR switch.
-* ``link-latency: 6405``: This models a network with 6405 cycles of link latency. Since we are modeling processors running at 3.2 Ghz, 1 cycle = 1/3.2 ns, so 6405 cycles is roughly 2 microseconds.
-* ``switching-latency: 10``: This models switches with a minimum port-to-port latency of 10 cycles.
-* ``net-bandwidth: 200``: This sets the bandwidth of the NICs to 200 Gbit/s. Currently you can set any integer value less than this without making hardware modifications.
-* ``default-hw-config: firesim-rocket-quadcore-nic-l2-llc4mb-ddr3``: This tells the manager to use a quad-core Rocket Chip configuration with 512 KB of L2, 4 MB of L3 (LLC) and 16 GB of DDR3, with a NIC, for each of the simulated nodes in the topology.
+* ``link_latency: 6405``: This models a network with 6405 cycles of link latency. Since we are modeling processors running at 3.2 Ghz, 1 cycle = 1/3.2 ns, so 6405 cycles is roughly 2 microseconds.
+* ``switching_latency: 10``: This models switches with a minimum port-to-port latency of 10 cycles.
+* ``net_bandwidth: 200``: This sets the bandwidth of the NICs to 200 Gbit/s. Currently you can set any integer value less than this without making hardware modifications.
+* ``default_hw_config: firesim_rocket_quadcore_nic_l2_llc4mb_ddr3``: This tells the manager to use a quad-core Rocket Chip configuration with 512 KB of L2, 4 MB of L3 (LLC) and 16 GB of DDR3, with a NIC, for each of the simulated nodes in the topology.
 
-You'll see other parameters here, like ``run-instance-market``,
-``spot-interruption-behavior``, and ``spot-max-price``. If you're an experienced
+You'll see other parameters here, like ``run_instance_market``,
+``spot_interruption_behavior``, and ``spot_max_price``. If you're an experienced
 AWS user, you can see what these do by looking at the
 :ref:`manager-configuration-files` section. Otherwise, don't change them.
 
 As in the single-node tutorial, we will leave the last section (``workload:``)
 unchanged here, since we do want to run the buildroot-based Linux on our
-simulated system. The ``terminate-on-completion`` feature is an advanced feature
+simulated system. The ``terminate_on_completion`` feature is an advanced feature
 that you can learn more about in the :ref:`manager-configuration-files`
 section.
 
@@ -95,7 +95,7 @@ As a final sanity check, your ``config_runtime.yaml`` file should now look like 
 
 .. attention::
 
-    **[Advanced users] Simulating BOOM instead of Rocket Chip**: If you would like to simulate a single-core `BOOM <https://github.com/ucb-bar/riscv-boom>`__ as a target, set ``default-hw-config`` to ``firesim-boom-singlecore-nic-l2-llc4mb-ddr3``.
+    **[Advanced users] Simulating BOOM instead of Rocket Chip**: If you would like to simulate a single-core `BOOM <https://github.com/ucb-bar/riscv-boom>`__ as a target, set ``default_hw_config`` to ``firesim_boom_singlecore_nic_l2_llc4mb_ddr3``.
 
 
 Launching a Simulation!
@@ -139,11 +139,11 @@ and then take a minute or two while your ``f1.16xlarge`` instance launches.
 Once the launches complete, you should see the instance id printed and the instance
 will also be visible in your AWS EC2 Management console. The manager will tag
 the instances launched with this operation with the value you specified above
-as the ``run-farm-tag`` parameter from the ``config_runtime.yaml`` file, which we left
+as the ``run_farm_tag`` parameter from the ``config_runtime.yaml`` file, which we left
 set as ``mainrunfarm``. This value allows the manager to tell multiple Run Farms
 apart -- i.e., you can have multiple independent Run Farms running different
 workloads/hardware configurations in parallel. This is detailed in the
-:ref:`manager-configuration-files` and the :ref:`firesim-launchrunfarm` 
+:ref:`manager-configuration-files` and the :ref:`firesim-launchrunfarm`
 sections -- you do not need to be familiar with it here.
 
 Setting up the simulation infrastructure
@@ -311,7 +311,7 @@ output, we see that our simulated system is running on the instance with IP
 	ssh 172.30.2.178
 
 This will log you into the instance running the simulation. On this machine,
-run ``screen -ls`` to get the list of all running simulation components. 
+run ``screen -ls`` to get the list of all running simulation components.
 Attaching to the screens ``fsim0`` to ``fsim7`` will let you attach to the
 consoles of any of the 8 simulated nodes. You'll also notice an additional
 screen for the switch, however by default there is no interesting output printed
@@ -493,7 +493,7 @@ If you take a look at the workload output directory given in the manager output 
 
 
 What are these files? They are specified to the manager in a configuration file
-(``firesim/deploy/workloads/linux-uniform.json``) as files that we want
+(:gh-file-ref:`deploy/workloads/linux-uniform.json`) as files that we want
 automatically copied back to our manager after we run a simulation, which is
 useful for running benchmarks automatically. Note that there is a directory for
 each simulated node and each simulated switch in the cluster. The
