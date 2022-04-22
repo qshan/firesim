@@ -312,9 +312,9 @@ Below, we outline each section and parameter in detail.
 ``build_farm``
 ^^^^^^^^^^^^^^^^^^^^^
 
-In this section, you specify the specific build farm name that you wish to use to build FPGA bitstreams (see ``config_build_farm.yaml`` for build farm options and specification).
-For example, if you want to run your FPGA builds on a pre-specified build farm that automatically spawns EC2 instances per FPGA build, you can
-write ``build_farm: ec2_build_farm``. To see all mainline build farm options, refer to ``config_build_farm.yaml``.
+In this section, you specify the specific build farm configuration that you wish to use to build FPGA bitstreams (see :ref:`config-build-farm` for build farm options and specification).
+For example, if you want to run your FPGA builds on a pre-specified build farm that automatically spawns an EC2 instance per FPGA build, you can
+write ``build_farm: ec2_build_farm``. To see all mainline build farm options, refer to :ref:`config-build-farm`.
 
 
 ``builds_to_run``
@@ -322,7 +322,7 @@ write ``build_farm: ec2_build_farm``. To see all mainline build farm options, re
 
 In this section, you can list as many build entries as you want to run
 for a particular call to the ``buildafi`` command (see
-``config_build_recipes.yaml`` below for how to define a build entry). For
+:ref:`config-build-recipes` below for how to define a build entry). For
 example, if we want to run the builds named ``awesome_firesim_config`` and ``quad_core_awesome_firesim_config``, we would
 write:
 
@@ -387,9 +387,8 @@ you made up). Such a section must contain the following fields:
 ``build_farm_type``
 """""""""""""""""""""
 
-This field maps the build farm configuration to a specific build farm class name
-(or in other words, a build farm definition). By default, build farm classes can
-be found in :gh-file-ref:`deploy/buildtools/buildfarm.py`. However, you can specify
+This field specifies the name of the python `build farm class` that implements your desired build farm.
+By default, build farm classes can be found in :gh-file-ref:`deploy/buildtools/buildfarm.py`. However, you can specify
 your own custom build farm classes by adding your python file to the ``PYTHONPATH``.
 For example, to use the ``AWSEC2`` build farm class, you would write ``build_farm_type: AWSEC2``.
 
@@ -403,7 +402,7 @@ the ``_parse_args`` function in the build farm class given by ``build_farm_type`
 Mainline build farm configurations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-There are two mainline build farm configurations provided (with their corresponding build farm classes in :gh-file-ref:`deploy/buildtools/buildfarm.py`).
+There are two mainline build farm configurations provided (their build farm classes are defined in :gh-file-ref:`deploy/buildtools/buildfarm.py`).
 
 ``ec2_build_farm (AWSEC2)``
 """""""""""""""""""""""""""
@@ -419,11 +418,11 @@ built, a new EC2 instance (build host) will be spawned according to the build fa
 arguments. Its ``build_farm_type`` is set as the ``AWSEC2`` build farm class.
 
 The ``instance_type`` argument defines the type of instance that the build will run on.
-Generally, running on a ``z1d.2xlarge`` is sufficient. In our experience, using more
-powerful instances than this provides little gain.
+Generally, running on a ``z1d.2xlarge`` is sufficient. For very large designs, using a
+``z1d.3xlarge`` may be required to handle Vivado's memory footprint.
 
 The ``build_instance_market`` argument specifies the AWS market used. You can specify either
-``spot`` or ``ondemand`` here.
+``spot`` or ``ondemand``.
 
 When ``build_instance_market: spot``, the ``spot_interruption_behavior`` and ``spot_max_price``
 arguments determines spot instance behaviors. The ``spot_interruption_behavior`` value
@@ -432,8 +431,9 @@ either ``hibernate``, ``stop``, or ``terminate`` for this value. The ``spot_max_
 value determines the max price you are willing to pay per instance, in dollars.
 You can also set it to ``ondemand`` to set your max to the on-demand price for the instance.
 
-The ``default_build_dir`` argument specifies the default location of the build directory used
+The ``default_build_dir`` argument specifies the location of the build directory used
 on the spawned build host which will hold build outputs from Vivado and other tools.
+This location cannot be overridden per spawned build host.
 
 ``local_build_farm (ExternallyProvisioned)``
 """"""""""""""""""""""""""""""""""""""""""""
@@ -446,7 +446,7 @@ on the spawned build host which will hold build outputs from Vivado and other to
 This build farm configuration allows users to provide their own build hosts
 (build machines) to be used for building FPGA images.
 In the case of AGFI builds and this specific configuration, this allows for users to build AGFIs locally
-(and potentially on other build hosts).
+or on a set of machines they maintain.
 Its ``build_farm_type`` is set as the ``ExternallyProvisioned`` build farm class.
 This build farm class assumes that the list of IPs given to it are pre-setup to work
 with FireSim (Vivado installed, FireSim dependencies installed, etc).
@@ -455,9 +455,9 @@ The ``default_build_dir`` argument specifies the default location of the build d
 on the build host which will hold build outputs from Vivado and other tools.
 This location can be overridden by specific build farm hosts (see ``build_farm_hosts`` description).
 
-The ``build_farm_hosts`` argument section provides a list of IP addresses (and ``localhost``) that
-can be used for builds. IP addresses must follow `Fabric syntax guidelines <https://ploxiln.github.io/fab-classic/usage/execution.html#hosts>`_.
-An example of a list of IPs to run builds on is as follows:
+The ``build_farm_hosts`` argument section provides a list of host names that
+can be used for builds. Host names must follow `Fabric syntax guidelines <https://ploxiln.github.io/fab-classic/usage/execution.html#hosts>`_.
+An example of a list of hosts to run builds on is as follows:
 
 ::
 
@@ -473,7 +473,7 @@ they can provide the ``override_build_dir`` field. For example:
 
     build_farm_hosts:
         - localhost
-        # Note the : after the IP address
+        # Note the : after the host name
         - "111.111.1.111":
             override_build_dir: /my/awesome/path
         - "centos@222.222.2.222"
@@ -553,7 +553,7 @@ This is used behind the scenes in the AGFI creation process. You will only
 ever need to access this bucket manually if there is a failure in AGFI creation
 in Amazon's backend.
 
-Naming rules: this must be all lowercase and you should stick to letters and numbers.
+Naming rules: this must be all lowercase and you should stick to letters and numbers ([a-z0-9]).
 
 The first time you try to run a build, the FireSim manager will try to create
 the bucket you name here. If the name is unavailable, it will complain and you
