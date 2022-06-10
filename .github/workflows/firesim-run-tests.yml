@@ -146,6 +146,18 @@ jobs:
       - name: Run mypy type checker
         run: .github/scripts/run-mypy-typechecker.py
 
+  run-schema-validation:
+    name: run-schema-validation
+    needs: [setup-manager, change-filters]
+    if: needs.change-filters.outputs.needs-manager-python-only == 'true'
+    runs-on: ${{ github.run_id }}
+    env:
+      TERM: xterm-256-color
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run yamale yaml schema validation
+        run: .github/scripts/run-schema-validation.py
+
   run-scalafmt-check:
     name: run-scalafmt-check
     needs: [setup-manager]

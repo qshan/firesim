@@ -21,6 +21,7 @@ from runtools.simulation_data_classes import TracerVConfig, AutoCounterConfig, H
 from util.streamlogger import StreamLogger
 from util.inheritors import inheritors
 from util.deepmerge import deep_merge
+from util.schemavalidation import validate
 
 from typing import Optional, Dict, Any, List, Sequence, TYPE_CHECKING
 import argparse # this is not within a if TYPE_CHECKING: scope so the `register_task` in FireSim can evaluate it's annotation
@@ -232,6 +233,9 @@ class RuntimeHWDB:
 
     def __init__(self, hardwaredbconfigfile: str) -> None:
 
+        if not validate(hardwaredbconfigfile, "schemas/sample-backup-configs/sample_config_hwdb.yaml"):
+            raise Exception(f"Invalid YAML in file: {hardwaredbconfigfile}")
+
         agfidb_configfile = None
         with open(hardwaredbconfigfile, "r") as yaml_file:
             agfidb_configfile = yaml.safe_load(yaml_file)
@@ -269,6 +273,9 @@ class InnerRuntimeConfiguration:
 
     def __init__(self, runtimeconfigfile: str, configoverridedata: str) -> None:
 
+        if not validate(runtimeconfigfile, "schemas/sample-backup-configs/sample_config_runtime.yaml"):
+            raise Exception(f"Invalid YAML in file: {runtimeconfigfile}")
+
         runtime_configfile = None
         with open(runtimeconfigfile, "r") as yaml_file:
             runtime_configfile = yaml.safe_load(yaml_file)
@@ -289,6 +296,15 @@ class InnerRuntimeConfiguration:
 
         # Setup the run farm
         defaults_file = runtime_dict['run_farm']['base_recipe']
+
+        schema_file = f"schemas/{defaults_file}"
+        if os.path.exists(schema_file):
+            rootLogger.info(f"Using schema {schema_file} for {defaults_file}")
+            if not validate(defaults_file, schema_file):
+                raise Exception(f"Invalid YAML in file: {defaults_file}")
+        else:
+            rootLogger.warning(f"Unable to find schema file for {defaults_file}. Skipping validation.")
+
         with open(defaults_file, "r") as yaml_file:
             run_farm_configfile = yaml.safe_load(yaml_file)
         run_farm_type = run_farm_configfile["run_farm_type"]

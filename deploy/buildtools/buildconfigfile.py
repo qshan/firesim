@@ -12,6 +12,7 @@ from awstools.awstools import auto_create_bucket, get_snsname_arn
 from buildtools.buildfarm import BuildFarm
 from util.inheritors import inheritors
 from util.deepmerge import deep_merge
+from util.schemavalidation import validate
 
 # imports needed for python type checking
 from typing import Dict, Optional, List, Set, Type, Any, TYPE_CHECKING
@@ -53,6 +54,9 @@ class BuildConfigFile:
 
         self.args = args
 
+        if not validate(args.buildconfigfile, "schemas/sample-backup-configs/sample_config_build.yaml"):
+            raise Exception(f"Invalid YAML in file: {args.buildconfigfile}")
+
         global_build_config_file = None
         with open(args.buildconfigfile, "r") as yaml_file:
             global_build_config_file = yaml.safe_load(yaml_file)
@@ -64,6 +68,9 @@ class BuildConfigFile:
         # this is a list of actual builds to run
         builds_to_run_list = global_build_config_file['builds_to_run']
         self.num_builds = len(builds_to_run_list)
+
+        if not validate(args.buildrecipesconfigfile, "schemas/sample-backup-configs/sample_config_build_recipes.yaml"):
+            raise Exception(f"Invalid YAML in file: {args.buildrecipesconfigfile}")
 
         build_recipes_config_file = None
         with open(args.buildrecipesconfigfile, "r") as yaml_file:
@@ -86,6 +93,15 @@ class BuildConfigFile:
         # retrieve the build host section
 
         build_farm_defaults_file = global_build_config_file["build_farm"]["base_recipe"]
+
+        schema_file = f"schemas/{build_farm_defaults_file}"
+        if os.path.exists(schema_file):
+            rootLogger.info(f"Using schema {schema_file} for {build_farm_defaults_file}")
+            if not validate(build_farm_defaults_file, schema_file):
+                raise Exception(f"Invalid YAML in file: {build_farm_defaults_file}")
+        else:
+            rootLogger.warning(f"Unable to find schema file for {build_farm_defaults_file}. Skipping validation.")
+
         build_farm_config_file = None
         with open(build_farm_defaults_file, "r") as yaml_file:
             build_farm_config_file = yaml.safe_load(yaml_file)

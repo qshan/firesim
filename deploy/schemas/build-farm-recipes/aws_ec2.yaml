@@ -1,0 +1,7 @@
+build_farm_type: str()
+args:
+    instance_type: str()
+    build_instance_market: enum("ondemand", "spot")
+    spot_interruption_behavior: enum("hibernate", "stop", "terminate")
+    spot_max_price: any(enum("ondemand"), str())
+    default_build_dir: str()

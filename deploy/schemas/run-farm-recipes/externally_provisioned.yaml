@@ -1,0 +1,13 @@
+run_farm_type: str()
+args:
+    default_num_fpgas: int(required=False)
+    default_platform: str(required=False)
+    default_simulation_dir: str(required=False)
+    run_farm_hosts: list(str(), include("run_farm_host_spec"))
+
+---
+
+run_farm_host_spec:
+    override_num_fpgas: int(required=False)
+    override_platform: str(required=False)
+    override_simulation_dir: str(required=False)
